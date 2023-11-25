@@ -6,14 +6,17 @@ import { TextInput } from "react-native-gesture-handler";
 
 import { Link } from "expo-router";
 import { useState } from "react";
+import calculateWattageCost from "../../constants/lib";
 
 export default function TabOneScreen() {
-  const [wattage, setWattage] = useState<number | undefined>(undefined);
-  const [hours, setHours] = useState<number | undefined>(undefined);
-  const [cost, setCost] = useState<number | undefined>(undefined);
+  const [wattage, setWattage] = useState<string>("");
+  const [hours, setHours] = useState<string>("");
+  const [cost, setCost] = useState<string>("");
+  const [result, setResult] = useState<any>(0);
 
-  const calculate = () => {
-    console.log(hours);
+  const onSubmit = () => {
+    const computationResult = calculateWattageCost({ wattage, hours, cost });
+    setResult(computationResult);
   };
 
   return (
@@ -33,7 +36,8 @@ export default function TabOneScreen() {
         <Text style={styles.Inputtitle}>Wattage</Text>
         <Text>This is the appliance power rating</Text>
         <TextInput
-          onChangeText={(value: string) => setWattage(parseInt(value, 10))}
+          value={wattage}
+          onChangeText={(value: string) => setWattage(value)}
           style={styles.input}
           keyboardType="numeric"
           placeholder="0"
@@ -41,14 +45,14 @@ export default function TabOneScreen() {
         <Text style={styles.Inputtitle}>Hours use per day</Text>
         <Text>How long do you operate the appliance daily?</Text>
         <TextInput
-          onChangeText={(value: string) => setHours(parseInt(value, 10))}
+          onChangeText={(value: string) => setHours(value)}
           style={styles.input}
           keyboardType="numeric"
           placeholder="0"
         />
         <Text style={styles.Inputtitle}>1 kilowatt-hour (kWh) cost</Text>
         <TextInput
-          onChangeText={(value: string) => setCost(parseInt(value, 10))}
+          onChangeText={(value: string) => setCost(value)}
           style={styles.input}
           keyboardType="numeric"
           placeholder="10"
@@ -60,7 +64,7 @@ export default function TabOneScreen() {
               styles.buttonCalculate,
               { backgroundColor: "#00C853", flex: 1 },
             ]}
-            onPress={calculate}
+            onPress={onSubmit}
           >
             <Text style={styles.buttonText}>Calculate</Text>
           </TouchableOpacity>
@@ -70,6 +74,8 @@ export default function TabOneScreen() {
             <Text style={[styles.buttonText, { color: "#000" }]}>Reset</Text>
           </TouchableOpacity>
         </View>
+
+        <Text>Result: {result}</Text>
       </View>
     </View>
   );
@@ -123,7 +129,7 @@ const styles = StyleSheet.create({
   },
   buttonCalculate: {
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 50,
     marginLeft: 5,
     alignItems: "center",
   },
